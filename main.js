@@ -153,8 +153,8 @@ setInterval(function(){
         });
       });
     });
-}, 10000);
-// }, 600000);
+// }, 10000);
+}, 600000);
 
 function handleError(err) {
   console.error('ERROR response status:', err.statusCode);
