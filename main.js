@@ -128,8 +128,12 @@ setInterval(function(){
             in_reply_to_status_id: tweet_id
           }
           bot.twit.post('statuses/update', postparams, function(err,reply){
-            if (err) return handleError(err);
-            console.log("Tweeted");
+            if (err){
+              return handleError(err);
+            }
+            else {
+              console.log("Tweeted " + status);
+            }
           });
         });
       });
@@ -138,6 +142,6 @@ setInterval(function(){
 }, 600000);
 
 function handleError(err) {
-  console.error('response status:', err.statusCode);
-  console.error('data:', err.data);
+  console.error('ERROR response status:', err.statusCode);
+  console.error('ERROR data:', err.data);
 }
