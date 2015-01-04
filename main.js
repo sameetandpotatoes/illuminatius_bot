@@ -34,28 +34,15 @@ function datestring () {
   return d.getUTCFullYear()   + '-'
      +  (d.getUTCMonth() + 1) + '-'
      +   d.getDate();
-};
-
-function removeHTTP(text){
-  var newText = '';
-  var index = text.indexOf("http://");
-  if (index >= 0){
-    for (var i = index; i < text.length; i++){
-      if (text.substring(i, i+1) == ' '){
-        var endIndex = i+1;
-        newText = text.substring(0,index) + '' + text.substring(endIndex, text.length - 1);
-        break;
-      } else if (i == text.length - 1){
-        var endIndex = i;
-        newText = text.substring(0,index) + '' + text.substring(endIndex, text.length - 1);
-        break;
-      }
-    }
-  } else{
-    newText = text;
-  }
-  return newText;
 }
+
+function cleanTweet(text){
+  var nohttp = removeFilter("http://", text);
+  var nohash = removeFilter("#", nohttp);
+  var cleaned = removeFilter("@", nohash);
+  return nohash;
+}
+
 
 function getContext(tweet){
   var array = tweet.split(" 3 ");
@@ -67,7 +54,9 @@ function getUsersTweets(query, callback){
   var tweets = [];
   bot.twit.get('statuses/user_timeline', {screen_name: "halflifescouter", count: 1000},
     function (err, res){
-      if (res !== undefined){
+      if (err){
+        handleError(err);
+      } else{
         for (var i = 0; i < res.length; i++){
           tweets.push(res[i]["text"]);
         }
@@ -76,11 +65,34 @@ function getUsersTweets(query, callback){
     });
 }
 
+function removeFilter(query, text){
+  var newText = text;
+  var index = text.indexOf(query);
+  while (index >= 0){
+    for (var i = index; i < text.length; i++){
+      if (text.substring(i, i+1) == ' ' || (query == "@" && (text.substring(i, i+1) == ':' || text.substring(i, i+1) == ','))){
+        var endIndex = i+1;
+        newText = text.substring(0,index) + '' + text.substring(endIndex, text.length);
+        text = newText;
+        break;
+      } else if (i == text.length - 1){
+        var endIndex = i;
+        newText = text.substring(0,index) + '' + text.substring(i+1, text.length);
+        text = newText;
+        break;
+      }
+    }
+    index = text.indexOf(query);
+  }
+  return text;
+}
+
 setInterval(function(){
+    console.log("Bot started");
     var tweets;
     getUsersTweets("", function(prevTweets){
       tweets = prevTweets;
-
+      console.log("Obtained users tweets");
       var params = {
           q: '3',
           lang: 'en',
@@ -90,6 +102,7 @@ setInterval(function(){
       };
       bot.twit.get('search/tweets', params, function (err, reply) {
         if(err) return handleError(err);
+        console.log("Searched all tweets for 3");
         var threes = require('./usesofthree');
         var user = '';
         var context = "";
@@ -110,12 +123,14 @@ setInterval(function(){
             if (j < tweets.length){
               continue;
             }
-
-            text = removeHTTP(text);
+            console.log("Original: " + text);
+            text = cleanTweet(text);
+            console.log("Cleaned: " + text);
             while (length > 0 && text.indexOf(threes[length-1]) < 0){
               length--;
             }
             if (length == 0){ //Traversed the entire array, didn't find any of those uses
+              console.log("Found a good tweet: " + text);
               context = getContext(text);
               user = reply.statuses[i]["user"]["screen_name"];
               tweet_id = reply.statuses[i]["id"];
@@ -138,8 +153,8 @@ setInterval(function(){
         });
       });
     });
-// }, 10000);
-}, 600000);
+}, 10000);
+// }, 600000);
 
 function handleError(err) {
   console.error('ERROR response status:', err.statusCode);
