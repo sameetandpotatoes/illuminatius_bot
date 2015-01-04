@@ -63,51 +63,79 @@ function getContext(tweet){
   return context;
 }
 
+function getUsersTweets(query, callback){
+  var tweets = [];
+  bot.twit.get('statuses/user_timeline', {screen_name: "halflifescouter", count: 1000},
+    function (err, res){
+      if (res !== undefined){
+        for (var i = 0; i < res.length; i++){
+          tweets.push(res[i]["text"]);
+        }
+        callback(tweets);
+      }
+    });
+}
+
 setInterval(function(){
-    var params = {
-        q: '3',
-        lang: 'en',
-        since: datestring(),
-        count: 50,
-        result_type: 'mixed'
-    };
-    bot.twit.get('search/tweets', params, function (err, reply) {
-      if(err) return handleError(err);
-      var threes = require('./usesofthree');
-      var user = '';
-      var context = "";
-      var tweet_id;
-      var length = threes.length;
-      shuffleArray(reply.statuses, function(randomized){
-        for (var i = 0; i < randomized.length; i++){
-          var length = threes.length;
-          var text = reply.statuses[i]["text"];
-          if (text.indexOf(" 3 ") < 0){
-             continue;
+    var tweets;
+    getUsersTweets("", function(prevTweets){
+      tweets = prevTweets;
+
+      var params = {
+          q: '3',
+          lang: 'en',
+          since: datestring(),
+          count: 75,
+          result_type: 'mixed'
+      };
+      bot.twit.get('search/tweets', params, function (err, reply) {
+        if(err) return handleError(err);
+        var threes = require('./usesofthree');
+        var user = '';
+        var context = "";
+        var tweet_id;
+        var length = threes.length;
+        shuffleArray(reply.statuses, function(randomized){
+          for (var i = 0; i < randomized.length; i++){
+            var length = threes.length;
+            var text = reply.statuses[i]["text"];
+            if (text.indexOf(" 3 ") < 0){
+               continue;
+            }
+
+            //Check previous tweets
+            var j = 0;
+            while (j < tweets.length && tweets[j].indexOf(reply.statuses[i]["user"]["screen_name"]) < 0)
+              j++;
+            if (j < tweets.length){
+              continue;
+            }
+
+            text = removeHTTP(text);
+            while (length > 0 && text.indexOf(threes[length-1]) < 0){
+              length--;
+            }
+            if (length == 0){ //Traversed the entire array, didn't find any of those uses
+              context = getContext(text);
+              user = reply.statuses[i]["user"]["screen_name"];
+              tweet_id = reply.statuses[i]["id"];
+              break;
+            }
           }
-          text = removeHTTP(text);
-          while (length > 0 && text.indexOf(threes[length-1]) < 0){
-            length--;
+          var status = '@' + user + ' ' + context + '?!?! Half Life 3 Confirmed!!!';
+          var postparams = {
+            status: status,
+            in_reply_to_status_id: tweet_id
           }
-          if (length == 0){ //Traversed the entire array, didn't find any of those uses
-            context = getContext(text);
-            user = reply.statuses[i]["user"]["screen_name"];
-            tweet_id = reply.statuses[i]["id"];
-            break;
-          }
-        }
-        var status = '@' + user + ' ' + context + '?!?! Half Life 3 Confirmed!!!';
-        var postparams = {
-          status: status,
-          in_reply_to_status_id: tweet_id
-        }
-        bot.twit.post('statuses/update', postparams, function(err,reply){
-          if (err) return handleError(err);
-          console.log("Tweeted");
+          bot.twit.post('statuses/update', postparams, function(err,reply){
+            if (err) return handleError(err);
+            console.log("Tweeted");
+          });
         });
       });
     });
-}, 450000);
+// }, 10000);
+}, 600000);
 
 function handleError(err) {
   console.error('response status:', err.statusCode);
