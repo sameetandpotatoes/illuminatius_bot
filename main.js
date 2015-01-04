@@ -107,8 +107,7 @@ setInterval(function(){
         });
       });
     });
-// }, 10000);
-}, 900000);
+}, 450000);
 
 function handleError(err) {
   console.error('response status:', err.statusCode);
