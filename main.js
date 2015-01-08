@@ -39,8 +39,11 @@ function datestring () {
 function cleanTweet(text){
   var nohttp = removeFilter("http://", text);
   var nohash = removeFilter("#", nohttp);
-  var cleaned = removeFilter("@", nohash);
-  return nohash;
+  var nomention = removeFilter("@", nohash);
+  var noapost = removeFilter("'", nomention);
+  var nocarrot = removeFilter("^", noapost);
+  var final = nocarrot;
+  return final;
 }
 
 
@@ -70,7 +73,9 @@ function removeFilter(query, text){
   var index = text.indexOf(query);
   while (index >= 0){
     for (var i = index; i < text.length; i++){
-      if (text.substring(i, i+1) == ' ' || (query == "@" && (text.substring(i, i+1) == ':' || text.substring(i, i+1) == ','))){
+      if (text.substring(i, i+1) == ' ' ||
+          (query == "@" && (text.substring(i, i+1) == ':' || text.substring(i, i+1) == ',')) ||
+          (query == "'" && i != index && (text.substring(i, i+1) == "'"))){
         var endIndex = i+1;
         newText = text.substring(0,index) + '' + text.substring(endIndex, text.length);
         text = newText;
@@ -137,7 +142,7 @@ setInterval(function(){
               break;
             }
           }
-          var status = '@' + user + ' ' + context + '?!?! Half Life 3 Confirmed!!!';
+          var status = '@' + user + ' ' + context + "?! Half Life 3, Portal 3, Dota 3, Team Fortress 3: They're ALL confirmed!";
           var postparams = {
             status: status,
             in_reply_to_status_id: tweet_id
@@ -154,7 +159,7 @@ setInterval(function(){
       });
     });
 // }, 10000);
-}, 600000);
+}, 500000);
 
 function handleError(err) {
   console.error('ERROR response status:', err.statusCode);
