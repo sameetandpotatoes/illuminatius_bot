@@ -55,7 +55,7 @@ function getContext(tweet){
 
 function getUsersTweets(query, callback){
   var tweets = [];
-  bot.twit.get('statuses/user_timeline', {screen_name: "halflifescouter", count: 1000},
+  bot.twit.get('statuses/user_timeline', {screen_name: "valve3scouter", count: 1000},
     function (err, res){
       if (err){
         handleError(err);
