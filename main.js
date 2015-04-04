@@ -1,4 +1,5 @@
 var express = require("express");
+var Twit = require('twit');
 var app = express();
 var port = Number(process.env.PORT || 5000);
 app.listen(port, function() {
@@ -11,8 +12,7 @@ var noThrees = require('./usesofthree');
 var threeTagLine = require('./three_tagline');
 var last_users_queue = ["ManUtd"];
 var day_in_ms = 86400000;
-var Bot = require('./node_modules/bot');
-var bot = new Bot(config.twitterAccess);
+var bot = new Twit(config.twitterAccess);
 
 function getTagLine(){
   return threeTagLine[Math.floor(Math.random() * threeTagLine.length)];
@@ -81,7 +81,7 @@ function find_three_tweet(days, callback){
       count: 75,
       result_type: 'mixed'
   };
-  bot.twit.get('search/tweets', params, function (err, reply) {
+  bot.get('search/tweets', params, function (err, reply) {
     //'Uses of three' contains all of the bad uses for '3' which I don't
     //want to retweet
     var user = '';
@@ -131,7 +131,7 @@ function find_three_tweet(days, callback){
 setInterval(function(){
   console.log("Bot started");
   find_three_tweet(3, function(status){
-    bot.twit.post('statuses/update', { status: status }, function(){
+    bot.post('statuses/update', { status: status }, function(){
       console.log("Tweeted " + status);
     });
   });
