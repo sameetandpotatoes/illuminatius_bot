@@ -64,7 +64,7 @@ function removeFilter(query, text){
   }
   return text;
 }
-The repetition part of the program starts here
+// The repetition part of the program starts here
 setInterval(function(){
     console.log("Bot started");
       //Search twitter for recent tweets for '3'
@@ -122,7 +122,7 @@ setInterval(function(){
         }
       });
     });
-}, 86400000);
+}, 43200000);
 
 //Posts more error data for debugging
 function handleError(err) {
