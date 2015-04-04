@@ -9,7 +9,12 @@ var Bot = require('./bot')
   , config1 = require('./config');
 
 var bot = new Bot(config1);
-var threes = require('./usesofthree');
+var noThrees = require('./usesofthree');
+var threeTagLine = require('./three_tagline');
+
+function getTagLine(){
+  return threeTagLine[Math.floor(Math.random() * threeTagLine.length)];
+}
 
 //Get a date string of the last three days to search Twitter
 function datestring () {
@@ -83,9 +88,9 @@ setInterval(function(){
       var user = '';
       var context = "";
       var tweet_id;
-      var length = threes.length;
+      var length = noThrees.length;
       for (var i = 0; i < reply.statuses.length; i++){
-        var length = threes.length;
+        var length = noThrees.length;
         var text = reply.statuses[i]["text"];
         //If no three present, move on
         if (text.indexOf(" 3 ") < 0){
@@ -95,7 +100,7 @@ setInterval(function(){
         text = cleanTweet(text);
         console.log("Cleaned: " + text);
         //Make sure no improper uses of three are evident
-        while (length > 0 && text.indexOf(threes[length-1]) < 0){
+        while (length > 0 && text.indexOf(noThrees[length-1]) < 0){
           length--;
         }
         //Traversed the entire array, didn't find any of those uses
@@ -107,7 +112,7 @@ setInterval(function(){
           break;
         }
       }
-      var status = '@' + user + ' ' + context + "?! Number of sides in a triangle is 3 too...Illuminati Confirmed!";
+      var status = '@' + user + ' ' + context + "? " + getTagLine() + " too...Illuminati Confirmed!";
       var postparams = {
         status: status,
         in_reply_to_status_id: tweet_id
@@ -122,7 +127,7 @@ setInterval(function(){
         }
       });
     });
-}, 43200000);
+}, 10800000);
 
 //Posts more error data for debugging
 function handleError(err) {
