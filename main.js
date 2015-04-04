@@ -6,7 +6,6 @@ app.listen(port, function() {
   console.log("Listening on " + port);
 });
 
-
 var config = require('./config');
 var noThrees = require('./usesofthree');
 var threeTagLine = require('./three_tagline');

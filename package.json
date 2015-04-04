@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "@illuminatius3 made by Sameet Sapra",
   "main": "main.js",
+  "scripts": {
+    "start": "supervisor main.js"
+  },
   "dependencies": {
     "twit": "1.0.0",
     "express": "3.5.1"
