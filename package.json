@@ -1,13 +1,12 @@
 {
   "name": "IlluminatiBot",
-  "description": "IlluminatiBot",
   "version": "1.0.0",
-  "private": true,
+  "description": "@illuminatius3 made by Sameet Sapra",
+  "main": "main.js",
   "dependencies": {
-    "node-twitterbot": "0.2.2",
+    "twit": "1.0.0",
     "express": "3.5.1",
   },
-  "engines": {
-    "node": "0.10.x"
-  }
+  "author": "Sameet-Sapra",
+  "license": "ISC"
 }
