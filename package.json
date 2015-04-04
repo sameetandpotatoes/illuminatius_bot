@@ -5,7 +5,7 @@
   "main": "main.js",
   "dependencies": {
     "twit": "1.0.0",
-    "express": "3.5.1",
+    "express": "3.5.1"
   },
   "author": "Sameet-Sapra",
   "license": "ISC"
