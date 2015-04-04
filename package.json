@@ -1,18 +1,10 @@
 {
-  "name": "HalfLifeBot",
+  "name": "IlluminatiBot",
+  "description": "IlluminatiBot",
   "version": "1.0.0",
-  "description": "This bot will scour twitter for any references to three and declare Half Life 3 as confirmed.",
-  "main": "main.js",
+  "private": true,
   "dependencies": {
-    "express": "~4.9.x",
-    "twit": "1.1.12"
-  },
-  "engines": {
-    "node": "0.10.x"
-  },
-  "scripts": {
-    "start": "node main.js"
-  },
-  "author": "Sameet Sapra",
-  "license": "ISC"
+    "node-twitterbot": "0.2.2",
+    "express": "3.5.1",
+  }
 }

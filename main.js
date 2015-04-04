@@ -5,21 +5,23 @@ app.listen(port, function() {
   console.log("Listening on " + port);
 });
 
-var Bot = require('./bot')
-  , config1 = require('./config');
 
-var bot = new Bot(config1);
+var config = require('./config');
 var noThrees = require('./usesofthree');
 var threeTagLine = require('./three_tagline');
+var last_users_queue = ["ManUtd"];
+var day_in_ms = 86400000;
+var Bot = require('./node_modules/bot');
+var bot = new Bot(config.twitterAccess);
 
 function getTagLine(){
   return threeTagLine[Math.floor(Math.random() * threeTagLine.length)];
 }
 
 //Get a date string of the last three days to search Twitter
-function datestring () {
-  var d = new Date(Date.now() - 5*60*60*1000 - 259200000);  //est timezone
-  //now minus 3 days
+function datestring (days) {
+  var new_date = Date.now() - (day_in_ms * days);
+  var d = new Date(new_date);
   return d.getUTCFullYear()   + '-'
      +  (d.getUTCMonth() + 1) + '-'
      +   d.getDate();
@@ -69,69 +71,68 @@ function removeFilter(query, text){
   }
   return text;
 }
+function find_three_tweet(days, callback){
+  var found_tweet = false;
+  var tweet = "";
+  var params = {
+      q: '3',
+      lang: 'en',
+      since: datestring(days),
+      count: 75,
+      result_type: 'mixed'
+  };
+  bot.twit.get('search/tweets', params, function (err, reply) {
+    //'Uses of three' contains all of the bad uses for '3' which I don't
+    //want to retweet
+    var user = '';
+    var context = "";
+    var tweet_id;
+    var length = noThrees.length;
+    for (var i = 0; i < reply.statuses.length; i++){
+      var status = reply.statuses[i];
+      if (last_users_queue.indexOf(status["user"]["screen_name"]) >= 0){
+        continue;
+      }
+      var length = noThrees.length;
+      var text = status["text"];
+      //If no three present, move on
+      // if (text.indexOf(" 3 ") < 0 && text.indexOf("three") < 0){
+      //    continue;
+      // }
+      var text = cleanTweet(text);
+      //Make sure no improper uses of three are evident
+      while (length > 0 && text.indexOf(noThrees[length-1]) < 0){
+        length--;
+      }
+      //Traversed the entire array, didn't find any of those uses
+      if (length == 0){
+        console.log("Found a good tweet: " + text);
+        context = getContext(text);
+        user = status["user"]["screen_name"];
+        tweet_id = status["id"];
+        status = '@' + user + ' ' + context + "? " + getTagLine() + " too...Illuminati Confirmed!"
+        last_users_queue.push(user);
+        if (last_users_queue.length > 50){
+          last_users_queue.shift();
+        }
+        found_tweet = true;
+        break;
+      }
+    }
+    if(found_tweet){
+      callback(status);
+    } else{
+      find_three_tweet(days++, function(tweet){
+      });
+    }
+  });
+}
 // The repetition part of the program starts here
 setInterval(function(){
-    console.log("Bot started");
-      //Search twitter for recent tweets for '3'
-      var params = {
-          q: '3',
-          lang: 'en',
-          since: datestring(),
-          count: 75,
-          result_type: 'mixed'
-      };
-      bot.twit.get('search/tweets', params, function (err, reply) {
-      if(err) return handleError(err);
-      console.log("Searched all tweets for 3");
-      //'Uses of three' contains all of the bad uses for '3' which I don't
-      //want to retweet
-      var user = '';
-      var context = "";
-      var tweet_id;
-      var length = noThrees.length;
-      for (var i = 0; i < reply.statuses.length; i++){
-        var length = noThrees.length;
-        var text = reply.statuses[i]["text"];
-        //If no three present, move on
-        if (text.indexOf(" 3 ") < 0){
-           continue;
-        }
-        console.log("Original: " + text);
-        text = cleanTweet(text);
-        console.log("Cleaned: " + text);
-        //Make sure no improper uses of three are evident
-        while (length > 0 && text.indexOf(noThrees[length-1]) < 0){
-          length--;
-        }
-        //Traversed the entire array, didn't find any of those uses
-        if (length == 0){
-          console.log("Found a good tweet: " + text);
-          context = getContext(text);
-          user = reply.statuses[i]["user"]["screen_name"];
-          tweet_id = reply.statuses[i]["id"];
-          break;
-        }
-      }
-      var status = '@' + user + ' ' + context + "? " + getTagLine() + " too...Illuminati Confirmed!";
-      var postparams = {
-        status: status,
-        in_reply_to_status_id: tweet_id
-      }
-      bot.twit.post('statuses/update', postparams, function(err,reply){
-        if (err){
-          console.log("Couldn't post " + status);
-          return handleError(err);
-        }
-        else {
-          console.log("Tweeted " + status);
-        }
-      });
+  console.log("Bot started");
+  find_three_tweet(3, function(status){
+    bot.twit.post('statuses/update', { status: status }, function(){
+      console.log("Tweeted " + status);
     });
-}, 10800000);
-
-//Posts more error data for debugging
-function handleError(err) {
-  console.error('ERROR response status:', err.statusCode);
-  console.error('ERROR data:', err.data);
-  console.error(err);
-}
+  });
+}, 20800000);
