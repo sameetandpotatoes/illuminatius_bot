@@ -9,12 +9,24 @@ app.listen(port, function() {
 var config = require('./config');
 var noThrees = require('./usesofthree');
 var threeTagLine = require('./three_tagline');
-var last_users_queue = ["ManUtd"];
+var last_users_queue = [];
 var day_in_ms = 86400000;
 var bot = new Twit(config.twitterAccess);
+var queue_max = 100;
 
+//Get a random tag line
 function getTagLine(){
   return threeTagLine[Math.floor(Math.random() * threeTagLine.length)];
+}
+//Get last tweets of the user so I don't post to the same person
+function getLastTweets(callback){
+  bot.get('statuses/user_timeline', {screen_name: config.screen_name, count: queue_max}, function(err, res){
+    for (var i = 0; i < res.length; i++){
+      var tweet = res[i];
+      last_users_queue.push(tweet.in_reply_to_screen_name);
+    }
+    callback(last_users_queue);
+  });
 }
 
 //Get a date string of the last three days to search Twitter
@@ -93,9 +105,8 @@ function find_three_tweet(days, callback){
       if (last_users_queue.indexOf(status["user"]["screen_name"]) >= 0){
         continue;
       }
-      var length = noThrees.length;
       var text = status["text"];
-      //If no three present, move on
+      //If no three present in the tweet, move on
       if (text.indexOf(" 3 ") < 0){
          continue;
       }
@@ -106,13 +117,12 @@ function find_three_tweet(days, callback){
       }
       //Traversed the entire array, didn't find any of those uses
       if (length == 0){
-        console.log("Found a good tweet: " + text);
         context = getContext(text);
         user = status["user"]["screen_name"];
         tweet_id = status["id"];
         status = '@' + user + ' ' + context + "? " + getTagLine() + " too...Illuminati Confirmed!"
         last_users_queue.push(user);
-        if (last_users_queue.length > 50){
+        if (last_users_queue.length > queue_max){
           last_users_queue.shift();
         }
         found_tweet = true;
@@ -122,17 +132,24 @@ function find_three_tweet(days, callback){
     if(found_tweet){
       callback(status);
     } else{
-      find_three_tweet(days++, function(tweet){
+      days++;
+      console.log("Couldn't find a tweet.. Increasing days" + days);
+      find_three_tweet(days, function(tweet){
       });
     }
   });
 }
-// The repetition part of the program starts here
-setInterval(function(){
-  console.log("Bot started");
-  find_three_tweet(3, function(status){
-    bot.post('statuses/update', { status: status }, function(){
-      console.log("Tweeted " + status);
+
+getLastTweets(function(queue){
+  last_users_queue = queue;
+  console.log("Got previous users");
+  // The repetition part of the program starts here
+  setInterval(function(){
+    console.log("Bot started");
+    find_three_tweet(3, function(status){
+      bot.post('statuses/update', { status: status }, function(){
+        console.log("Tweeted " + status);
+      });
     });
-  });
-}, 10800000);
+  }, 7200000);
+});
