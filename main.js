@@ -134,4 +134,4 @@ setInterval(function(){
       console.log("Tweeted " + status);
     });
   });
-}, 20800000);
+}, 10800000);
