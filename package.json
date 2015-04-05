@@ -1,0 +1,15 @@
+{
+  "name": "IlluminatiBot",
+  "version": "1.0.0",
+  "description": "@illuminatius3 made by Sameet Sapra",
+  "main": "main.js",
+  "scripts": {
+    "start": "supervisor main.js"
+  },
+  "dependencies": {
+    "twit": "1.1.14",
+    "express": "3.5.1"
+  },
+  "author": "Sameet-Sapra",
+  "license": "ISC"
+}
