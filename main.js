@@ -39,8 +39,9 @@ function cleanTweet(text){
 //Context is the word before and after the three
 function getContext(tweet){
   var array = tweet.split(" 3 ");
-  var context = array[0].substring(array[0].lastIndexOf(" ") + 1) + " 3 " + array[1].split(" ")[0];
-  return context;
+  var before3 = (array[0] != null) ? array[0].substring(array[0].lastIndexOf(" ") + 1) : "";
+  var after3 = (array[1] != null) ? array[1].split(" ")[0] : "";
+  return before3 + " 3 " + after3;
 }
 //Removes all instances of 'query' from 'text'
 function removeFilter(query, text){
@@ -95,9 +96,9 @@ function find_three_tweet(days, callback){
       var length = noThrees.length;
       var text = status["text"];
       //If no three present, move on
-      // if (text.indexOf(" 3 ") < 0 && text.indexOf("three") < 0){
-      //    continue;
-      // }
+      if (text.indexOf(" 3 ") < 0){
+         continue;
+      }
       var text = cleanTweet(text);
       //Make sure no improper uses of three are evident
       while (length > 0 && text.indexOf(noThrees[length-1]) < 0){
