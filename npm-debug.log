@@ -1,21 +1,86 @@
 0 info it worked if it ends with ok
-1 verbose cli [ 'node', '/usr/local/bin/npm', 'install' ]
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'install', 'Auth' ]
 2 info using npm@1.4.28
 3 info using node@v0.10.35
-4 error install Couldn't read dependencies
-5 error Failed to parse json
-5 error Unexpected token }
-6 error File: /Users/ssapra/Documents/Copy/Programming/node/illuminati_bot/package.json
-7 error Failed to parse package.json data.
-7 error package.json must be actual JSON, not just JavaScript.
-7 error
-7 error This is not a bug in npm.
-7 error Tell the package author to fix their package.json file. JSON.parse
-8 error System Darwin 14.1.0
-9 error command "node" "/usr/local/bin/npm" "install"
-10 error cwd /Users/ssapra/Documents/Copy/Programming/node/illuminati_bot
-11 error node -v v0.10.35
-12 error npm -v 1.4.28
-13 error file /Users/ssapra/Documents/Copy/Programming/node/illuminati_bot/package.json
-14 error code EJSONPARSE
-15 verbose exit [ 1, true ]
+4 warn package.json IlluminatiBot@1.0.0 No repository field.
+5 warn package.json IlluminatiBot@1.0.0 No README data
+6 verbose readDependencies using package.json deps
+7 verbose cache add [ 'Auth', null ]
+8 verbose cache add name=undefined spec="Auth" args=["Auth",null]
+9 verbose parsed url { protocol: null,
+9 verbose parsed url   slashes: null,
+9 verbose parsed url   auth: null,
+9 verbose parsed url   host: null,
+9 verbose parsed url   port: null,
+9 verbose parsed url   hostname: null,
+9 verbose parsed url   hash: null,
+9 verbose parsed url   search: null,
+9 verbose parsed url   query: null,
+9 verbose parsed url   pathname: 'Auth',
+9 verbose parsed url   path: 'Auth',
+9 verbose parsed url   href: 'Auth' }
+10 silly lockFile 35d0f5fb-Auth Auth
+11 verbose lock Auth /Users/ssapra/.npm/35d0f5fb-Auth.lock
+12 silly lockFile 35d0f5fb-Auth Auth
+13 silly lockFile 35d0f5fb-Auth Auth
+14 verbose addNamed [ 'Auth', '' ]
+15 verbose addNamed [ null, '*' ]
+16 silly lockFile fef2bf59-Auth Auth@
+17 verbose lock Auth@ /Users/ssapra/.npm/fef2bf59-Auth.lock
+18 silly addNameRange { name: 'Auth', range: '*', hasData: false }
+19 verbose request where is /Auth
+20 verbose request registry https://registry.npmjs.org/
+21 verbose request id fc90f5a8f07e1e7a
+22 verbose url raw /Auth
+23 verbose url resolving [ 'https://registry.npmjs.org/', './Auth' ]
+24 verbose url resolved https://registry.npmjs.org/Auth
+25 verbose request where is https://registry.npmjs.org/Auth
+26 info trying registry request attempt 1 at 18:54:55
+27 http GET https://registry.npmjs.org/Auth
+28 http 404 https://registry.npmjs.org/Auth
+29 verbose headers { date: 'Sat, 04 Apr 2015 23:54:55 GMT',
+29 verbose headers   server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+29 verbose headers   'content-type': 'application/json',
+29 verbose headers   'cache-control': 'max-age=0',
+29 verbose headers   'content-length': '51',
+29 verbose headers   'accept-ranges': 'bytes',
+29 verbose headers   via: '1.1 varnish',
+29 verbose headers   age: '0',
+29 verbose headers   'x-served-by': 'cache-ord1729-ORD',
+29 verbose headers   'x-cache': 'MISS',
+29 verbose headers   'x-cache-hits': '0',
+29 verbose headers   'x-timer': 'S1428191695.251941,VS0,VE272',
+29 verbose headers   'keep-alive': 'timeout=10, max=50',
+29 verbose headers   connection: 'Keep-Alive' }
+30 silly registry.get cb [ 404,
+30 silly registry.get   { date: 'Sat, 04 Apr 2015 23:54:55 GMT',
+30 silly registry.get     server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+30 silly registry.get     'content-type': 'application/json',
+30 silly registry.get     'cache-control': 'max-age=0',
+30 silly registry.get     'content-length': '51',
+30 silly registry.get     'accept-ranges': 'bytes',
+30 silly registry.get     via: '1.1 varnish',
+30 silly registry.get     age: '0',
+30 silly registry.get     'x-served-by': 'cache-ord1729-ORD',
+30 silly registry.get     'x-cache': 'MISS',
+30 silly registry.get     'x-cache-hits': '0',
+30 silly registry.get     'x-timer': 'S1428191695.251941,VS0,VE272',
+30 silly registry.get     'keep-alive': 'timeout=10, max=50',
+30 silly registry.get     connection: 'Keep-Alive' } ]
+31 silly lockFile fef2bf59-Auth Auth@
+32 silly lockFile fef2bf59-Auth Auth@
+33 error 404 404 Not Found: Auth
+33 error 404
+33 error 404 'Auth' is not in the npm registry.
+33 error 404 You should bug the author to publish it
+33 error 404 It was specified as a dependency of 'IlluminatiBot'
+33 error 404
+33 error 404 Note that you can also install from a
+33 error 404 tarball, folder, or http url, or git url.
+34 error System Darwin 14.1.0
+35 error command "node" "/usr/local/bin/npm" "install" "Auth"
+36 error cwd /Users/ssapra/Documents/Copy/Programming/node/illuminati_bot
+37 error node -v v0.10.35
+38 error npm -v 1.4.28
+39 error code E404
+40 verbose exit [ 1, true ]
