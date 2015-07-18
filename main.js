@@ -120,7 +120,7 @@ function find_three_tweet(days, callback){
         context = getContext(text);
         user = status["user"]["screen_name"];
         tweet_id = status["id"];
-        status = '@' + user + ' ' + context + "? " + getTagLine() + " too...Illuminati Confirmed!"
+        status = '.@' + user + ' ' + context + "? " + getTagLine() + " too...Illuminati Confirmed!"
         last_users_queue.push(user);
         if (last_users_queue.length > queue_max){
           last_users_queue.shift();
